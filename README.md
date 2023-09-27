@@ -1,2 +1,4 @@
-# vanna-svelte
-Svelte components for use with vanna-flask
+# Build
+```bash
+npx vite build --emptyOutDir
+```
