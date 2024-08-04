@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import type { ApiData, MessageContents } from './types.ts';
+    import type { ApiData, MessageContents } from './types.js';
     import InChatButton from './InChatButton.svelte';
     import SlowReveal from './SlowReveal.svelte';
 

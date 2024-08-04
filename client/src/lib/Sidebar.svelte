@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { config } from "./stores";
     import SlowReveal from "./SlowReveal.svelte";
 import type { QuestionLink } from "./types";
 

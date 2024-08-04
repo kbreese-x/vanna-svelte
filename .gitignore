@@ -1,1 +1,43 @@
-node_modules
+# Python-related
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+*.egg
+
+# Flask-related
+instance/
+.webassets-cache
+
+# Svelte/Node.js-related
+node_modules/
+/client/node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+/static/
+/client/dist/
+
+# Environment variables
+.env
+
+# Editor/IDE-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating system-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak

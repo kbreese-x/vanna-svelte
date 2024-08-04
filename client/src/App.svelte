@@ -3,6 +3,7 @@
   import Sidebar from './lib/Sidebar.svelte';
   import 'preline'
   import { onMount } from 'svelte';
+  import { config, updateConfig } from './lib/stores';
   import Title from './lib/Title.svelte';
   import AgentMessage from './lib/AgentMessage.svelte';
   import UserMessage from './lib/UserMessage.svelte';
@@ -12,7 +13,7 @@
   import AgentResponse from './lib/AgentResponse.svelte';
   import ArbitraryAgentMessage from './lib/ArbitraryAgentMessage.svelte';
   import SlowReveal from './lib/SlowReveal.svelte';
-  import type { ApiData, MessageContents, Method, Page, QuestionLink } from './lib/types.ts';
+  import type { ApiData, Config, MessageContents, Method, Page, QuestionLink } from './lib/types';
     import Thinking from './lib/Thinking.svelte';
     import Text from './lib/Text.svelte';
     import DataFrame from './lib/DataFrame.svelte';
@@ -24,6 +25,7 @@
   let message = 'Loading...';
 
   onMount(async () => {
+    loadConfig();
     getQuestionHistory();
 
     // Check the URL to see what page we're on
@@ -58,7 +60,9 @@
     clearMessages();
     addMessage({ type: 'user_question', question: question } )
     question_asked = true;
-    newApiRequest('generate_sql', 'GET', {'question': question})
+    newApiRequest('get_context', 'GET', {'question': question})
+    .then((context) => {
+      newApiRequest('generate_sql', 'GET', {'question': question, 'context': context})
       .then(addMessage)
       .then((msg: MessageContents) => {
         if (msg.type === 'sql') {
@@ -81,6 +85,8 @@
         }
       }
       )
+    })
+
   }
 
   function rerunSql(id: string) {
@@ -181,6 +187,24 @@
       })
   }
 
+  function loadConfig() {
+    fetch('http://localhost:8084/api/v0/get_config').then((res) => {
+      res.json().then(data => {
+        if(data.type === 'config') {
+          updateConfig(data.config)
+          // config.update(data.config);
+        }
+      }).catch(err => console.log(err))
+
+      }).catch((err) => {
+        throw new Error('Failed to fetch config');
+
+    }).then((res) => {
+
+    })
+  }
+
+  
   async function newApiRequest(endpoint: string, method: Method, args: Object) : Promise<MessageContents>  {
     try {
         // apiStatus = { status: 'Loading' };

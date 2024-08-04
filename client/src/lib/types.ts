@@ -28,3 +28,22 @@ export interface QuestionLink {
     question: string,
     id: string
 }
+
+export interface Config {
+    logo: string;
+    title: string;
+    subtitle: string;
+    show_training_data?: boolean;
+    suggested_questions?: boolean;
+    sql?: boolean;
+    table?: boolean;
+    csv_download?: boolean;
+    chart?: boolean;
+    redraw_chart?: boolean;
+    auto_fix_sql?: boolean;
+    ask_results_correct?: boolean;
+    followup_questions?: boolean;
+    summarization?: boolean;
+    function_generation?: boolean;
+    apiUrl?: string;
+}
