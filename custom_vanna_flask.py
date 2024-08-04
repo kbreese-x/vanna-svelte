@@ -90,6 +90,8 @@ class CustomVannaFlaskApp(VannaFlaskAPI):
         self.config["summarization"] = summarization
         self.config["function_generation"] = function_generation
 
+        self.allow_llm_to_run_sql = allow_llm_to_run_sql
+
         self.index_html_path = index_html_path
         self.assets_folder = assets_folder
         self.static_folder = static_folder
@@ -222,8 +224,11 @@ class CustomVannaFlaskApp(VannaFlaskAPI):
         @self.requires_auth
         @self.requires_cache(["sql"])
         def run_sql_if_allowed(user: any, id: str, sql: str):
+            # If we allow server to not write sql
             if not self.allow_llm_to_run_sql:
                 return jsonify({"type": "error", "error": "LLM is not allowed to run SQL queries."})
+            
+            # We will use this later if we are trying to allow read/write to SQL
             try:
                 if not vn.run_sql_is_set:
                     return jsonify(
@@ -247,6 +252,8 @@ class CustomVannaFlaskApp(VannaFlaskAPI):
                 )
             except Exception as e:
                 return jsonify({"type": "sql_error", "error": str(e)})
+
+
 
         # Proxy the /vanna.svg file to the remote server
         @self.flask_app.route("/vanna.svg")

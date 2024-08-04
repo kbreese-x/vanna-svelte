@@ -104,7 +104,7 @@ class SageMakerLLM(VannaBase):
     def generate_sql(
             self, 
             question: str, 
-            chat_history: list = [], 
+            # chat_history: list = [], 
             context: dict | None = None, 
             allow_llm_to_see_data: bool = False, 
             **kwargs
@@ -115,7 +115,7 @@ class SageMakerLLM(VannaBase):
         Args:
             question (str): The question to generate a SQL query for.
             context (Context): The context containing related information for SQL generation.
-            chat_history (list): The chat history of the current conversation.
+            # chat_history (list): The chat history of the current conversation.
             allow_llm_to_see_data (bool, optional): Whether to allow the LLM to see data. Defaults to False.
 
         Returns:
@@ -123,19 +123,20 @@ class SageMakerLLM(VannaBase):
         """
         if context is None:
             context = self.get_context(question, **kwargs)
-        
+            
         prompt = self.get_sql_prompt(
             initial_prompt=context.get("initial_prompt"),
+            question=question,
             question_sql_list=context.get("question_sql_list", []),
             ddl_list=context.get("ddl_list", []),
             doc_list=context.get("doc_list", []),
-            chat_history=chat_history,
+            # chat_history=chat_history,
             **kwargs,
         )
+        
         self.log(title="SQL Prompt", message=prompt)
         llm_response = self.submit_prompt(prompt, **kwargs)
         self.log(title="LLM Response", message=llm_response)
-
 
         if 'intermediate_sql' in llm_response:
             if not allow_llm_to_see_data:
@@ -163,57 +164,57 @@ class SageMakerLLM(VannaBase):
 
         return self.extract_sql(llm_response)
     
-    def get_sql_prompt(
-        self,
-        initial_prompt: str | None,
-        question_sql_list: list,
-        ddl_list: list,
-        doc_list: list,
-        chat_history: list,
-        **kwargs,
-    ):
-        if initial_prompt is None:
-            initial_prompt = f"You are a {self.dialect} expert. " + \
-            "Please help to generate a SQL query to answer the question. Your response should ONLY be based on the given context and follow the response guidelines and format instructions. "
+    # def get_sql_prompt(
+    #     self,
+    #     initial_prompt: str | None,
+    #     question_sql_list: list,
+    #     ddl_list: list,
+    #     doc_list: list,
+    #     # chat_history: list,
+    #     **kwargs,
+    # ):
+    #     if initial_prompt is None:
+    #         initial_prompt = f"You are a {self.dialect} expert. " + \
+    #         "Please help to generate a SQL query to answer the question. Your response should ONLY be based on the given context and follow the response guidelines and format instructions. "
 
-        initial_prompt = self.add_ddl_to_prompt(
-            initial_prompt, ddl_list, max_tokens=self.max_tokens
-        )
+    #     initial_prompt = self.add_ddl_to_prompt(
+    #         initial_prompt, ddl_list, max_tokens=self.max_tokens
+    #     )
 
-        if self.static_documentation != "":
-            doc_list.append(self.static_documentation)
+    #     if self.static_documentation != "":
+    #         doc_list.append(self.static_documentation)
 
-        initial_prompt = self.add_documentation_to_prompt(
-            initial_prompt, doc_list, max_tokens=self.max_tokens
-        )
+    #     initial_prompt = self.add_documentation_to_prompt(
+    #         initial_prompt, doc_list, max_tokens=self.max_tokens
+    #     )
 
-        initial_prompt += (
-            "===Response Guidelines \n"
-            "1. If the provided context is sufficient, please generate a valid SQL query without any explanations for the question. \n"
-            "2. If the provided context is almost sufficient but requires knowledge of a specific string in a particular column, please generate an intermediate SQL query to find the distinct strings in that column. Prepend the query with a comment saying intermediate_sql \n"
-            "3. If the provided context is insufficient, please explain why it can't be generated. \n"
-            "4. Please use the most relevant table(s). \n"
-            "5. If the question has been asked and answered before, please repeat the answer exactly as it was given before. \n"
-            f"6. Ensure that the output SQL is {self.dialect}-compliant and executable, and free of syntax errors. \n"
-        )
+    #     initial_prompt += (
+    #         "===Response Guidelines \n"
+    #         "1. If the provided context is sufficient, please generate a valid SQL query without any explanations for the question. \n"
+    #         "2. If the provided context is almost sufficient but requires knowledge of a specific string in a particular column, please generate an intermediate SQL query to find the distinct strings in that column. Prepend the query with a comment saying intermediate_sql \n"
+    #         "3. If the provided context is insufficient, please explain why it can't be generated. \n"
+    #         "4. Please use the most relevant table(s). \n"
+    #         "5. If the question has been asked and answered before, please repeat the answer exactly as it was given before. \n"
+    #         f"6. Ensure that the output SQL is {self.dialect}-compliant and executable, and free of syntax errors. \n"
+    #     )
 
-        message_log = [self.system_message(initial_prompt)]
+    #     message_log = [self.system_message(initial_prompt)]
 
-        for example in question_sql_list:
-            if example is None:
-                print("example is None")
-            else:
-                if example is not None and "question" in example and "sql" in example:
-                    message_log.append(self.user_message(example["question"]))
-                    message_log.append(self.assistant_message(example["sql"]))
+    #     for example in question_sql_list:
+    #         if example is None:
+    #             print("example is None")
+    #         else:
+    #             if example is not None and "question" in example and "sql" in example:
+    #                 message_log.append(self.user_message(example["question"]))
+    #                 message_log.append(self.assistant_message(example["sql"]))
 
-        for message in chat_history:
-            if message["role"] == "user":
-                message_log.append(self.user_message(message["content"]))
-            elif message["role"] == "assistant":
-                message_log.append(self.assistant_message(message["content"]))
+    #     # for message in chat_history:
+    #     #     if message["role"] == "user":
+    #     #         message_log.append(self.user_message(message["content"]))
+    #     #     elif message["role"] == "assistant":
+    #     #         message_log.append(self.assistant_message(message["content"]))
 
-        return message_log
+    #     return message_log
 
     def generate_chat_title(self, chat_history: list) -> str:
         messages = chat_history + \
