@@ -8,6 +8,11 @@ import type { QuestionLink } from "./types";
     export let loadQuestionPage: (id: string) => void;
 
     export let questionHistory: QuestionLink[];
+
+    let logo: string
+    config.subscribe(c => {
+        logo = c.logo;
+    })
 </script>
 
 <!-- Sidebar -->
@@ -15,7 +20,7 @@ import type { QuestionLink } from "./types";
     <nav class="hs-accordion-group w-full h-full flex flex-col" data-hs-accordion-always-open>
       <div class="flex items-center justify-between py-4 pr-4 pl-7">
         <!-- Logo -->
-        <img class="w-28 h-auto" src="https://img.vanna.ai/vanna-flask.svg" alt="Vanna Logo" />
+        <img class="w-28 h-auto" src={logo} alt="Vanna Logo" />
         <!-- End Logo -->
   
         <!-- Sidebar Toggle -->

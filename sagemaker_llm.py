@@ -1,5 +1,7 @@
 
 import os
+import re
+from pandas import DataFrame
 from transformers import AutoTokenizer
 from vanna.base import VannaBase
 import boto3
@@ -164,57 +166,40 @@ class SageMakerLLM(VannaBase):
 
         return self.extract_sql(llm_response)
     
-    # def get_sql_prompt(
-    #     self,
-    #     initial_prompt: str | None,
-    #     question_sql_list: list,
-    #     ddl_list: list,
-    #     doc_list: list,
-    #     # chat_history: list,
-    #     **kwargs,
-    # ):
-    #     if initial_prompt is None:
-    #         initial_prompt = f"You are a {self.dialect} expert. " + \
-    #         "Please help to generate a SQL query to answer the question. Your response should ONLY be based on the given context and follow the response guidelines and format instructions. "
+    def generate_followup_questions(self, question: str, sql: str, df: DataFrame | None=None, n_questions: int = 5, **kwargs) -> list:
+        system_message = (
+            f"You are a helpful data assistant. The user asked the question: '{question}'\n\n"
+            f"The SQL query generated for this question was:\n{sql}\n\n"
+        )
+        if df is not None:
+            system_message += (
+                f"The following is a pandas DataFrame with the results of the query:\n"
+                f"{df.to_markdown()}\n\n"
+            )
+        else:
+            system_message += "However, this SQL query has not been executed yet.\n\n"
 
-    #     initial_prompt = self.add_ddl_to_prompt(
-    #         initial_prompt, ddl_list, max_tokens=self.max_tokens
-    #     )
+        message_log = [
+            self.system_message(system_message),
+            self.user_message(
+                f"Generate a list of {n_questions} follow-up questions that the user might ask to explore this topic further or to refine the SQL query. "
+                "Please follow these guidelines:\n"
+                "1. Each question should be answerable with a SQL query.\n"
+                "2. Focus on questions that modify or extend the original SQL query to dig deeper into the data.\n"
+                "3. Avoid questions that require context from this conversation.\n"
+                "4. Do not use 'example' type questions.\n"
+                "5. Ensure each question has a one-to-one correspondence with a potential SQL query.\n"
+                "6. Do not include any explanations, just list the questions.\n"
+                "7. Each question will be presented as a clickable button to the user.\n\n"
+                "Respond with a numbered list of questions, one per line." +
+                self._response_language()
+            ),
+        ]
 
-    #     if self.static_documentation != "":
-    #         doc_list.append(self.static_documentation)
+        llm_response = self.submit_prompt(message_log, **kwargs)
+        numbers_removed = re.sub(r"^\d+\.\s*", "", llm_response, flags=re.MULTILINE)
 
-    #     initial_prompt = self.add_documentation_to_prompt(
-    #         initial_prompt, doc_list, max_tokens=self.max_tokens
-    #     )
-
-    #     initial_prompt += (
-    #         "===Response Guidelines \n"
-    #         "1. If the provided context is sufficient, please generate a valid SQL query without any explanations for the question. \n"
-    #         "2. If the provided context is almost sufficient but requires knowledge of a specific string in a particular column, please generate an intermediate SQL query to find the distinct strings in that column. Prepend the query with a comment saying intermediate_sql \n"
-    #         "3. If the provided context is insufficient, please explain why it can't be generated. \n"
-    #         "4. Please use the most relevant table(s). \n"
-    #         "5. If the question has been asked and answered before, please repeat the answer exactly as it was given before. \n"
-    #         f"6. Ensure that the output SQL is {self.dialect}-compliant and executable, and free of syntax errors. \n"
-    #     )
-
-    #     message_log = [self.system_message(initial_prompt)]
-
-    #     for example in question_sql_list:
-    #         if example is None:
-    #             print("example is None")
-    #         else:
-    #             if example is not None and "question" in example and "sql" in example:
-    #                 message_log.append(self.user_message(example["question"]))
-    #                 message_log.append(self.assistant_message(example["sql"]))
-
-    #     # for message in chat_history:
-    #     #     if message["role"] == "user":
-    #     #         message_log.append(self.user_message(message["content"]))
-    #     #     elif message["role"] == "assistant":
-    #     #         message_log.append(self.assistant_message(message["content"]))
-
-    #     return message_log
+        return [q for q in  numbers_removed.split("\n") if q.endswith('?')]
 
     def generate_chat_title(self, chat_history: list) -> str:
         messages = chat_history + \

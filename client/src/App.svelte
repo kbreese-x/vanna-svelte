@@ -20,9 +20,28 @@
     import Plotly from './lib/Plotly.svelte';
     import GreenButton from './lib/GreenButton.svelte';
     import ChatPage from './lib/ChatPage.svelte';
+    import ChatPageNoSql from './lib/ChatPageNoSql.svelte';
     import TrainingData from './lib/TrainingData.svelte';
-
+ 
   let message = 'Loading...';
+
+  let allow_run_sql: boolean, suggested_questions: boolean, sql: boolean, table: boolean, chart: boolean, redraw_chart: boolean, auto_fix_sql: boolean,
+      ask_results_correct: boolean, followup_questions: boolean, summarization: boolean, function_generation: boolean;
+  
+
+  config.subscribe((value) => {
+    allow_run_sql = value.allow_run_sql;
+    suggested_questions = value.suggested_questions;
+    sql = value.sql;
+    table = value.table;
+    chart = value.chart;
+    redraw_chart = value.redraw_chart;
+    auto_fix_sql = value.auto_fix_sql;
+    ask_results_correct = value.ask_results_correct;
+    followup_questions = value.followup_questions;
+    summarization = value.summarization;
+    function_generation = value.function_generation;
+  });
 
   onMount(async () => {
     loadConfig();
@@ -68,25 +87,42 @@
         if (msg.type === 'sql') {
           window.location.hash = msg.id;
           newApiRequest('run_sql', 'GET', {'id': msg.id})
-            .then(addMessage)
-            .then((msg: MessageContents) => {
-              if (msg.type === 'df') {
-                newApiRequest('generate_plotly_figure', 'GET', {'id': msg.id})
-                  .then(addMessage)
-                  .then((msg: MessageContents) => {
-                    if (msg.type === 'plotly_figure') {
-                      questionHistory = [...questionHistory, { question, id: msg.id }]
-                      newApiRequest('generate_followup_questions', 'GET', {'id': msg.id})
-                        .then(addMessage)  
-                    }
-                  })
-              }
-            })
+          .then(addMessage)
+          .then((msg: MessageContents) => {
+            if (msg.type === 'df') {
+              newApiRequest('generate_plotly_figure', 'GET', {'id': msg.id})
+              .then(addMessage)
+              .then((msg: MessageContents) => {
+                if (msg.type === 'plotly_figure') {
+                  questionHistory = [...questionHistory, { question, id: msg.id }]
+                  newApiRequest('generate_followup_questions', 'GET', {'id': msg.id})
+                  .then(addMessage)  
+                }
+              })
+            }
+          })
         }
-      }
-      )
+      })
     })
-
+  }
+  
+  function newQuestionNoRunSql(question: string) {
+    clearMessages();
+    addMessage({ type: 'user_question', question: question } )
+    question_asked = true;
+    newApiRequest('get_context', 'GET', {'question': question})
+    .then((context) => {
+      newApiRequest('generate_sql', 'GET', {'question': question, 'context': context})
+      .then(addMessage)
+      .then((msg: MessageContents) => {
+        if (msg.type === 'sql') {
+          window.location.hash = msg.id;
+          questionHistory = [...questionHistory, { question, id: msg.id }]
+          newApiRequest('generate_followup_questions_no_df', 'GET', {'id': msg.id})
+            .then(addMessage)
+        }
+      })
+    })
   }
 
   function rerunSql(id: string) {
@@ -138,6 +174,7 @@
     question_asked = true;
     newApiRequest('load_question', 'GET', {'id': id})
       .then(addMessage)
+      .then((data) => {console.log(data)}) // log result to console
   }
 
   function removeTrainingData(id: string) {
@@ -188,11 +225,10 @@
   }
 
   function loadConfig() {
-    fetch('http://localhost:8084/api/v0/get_config').then((res) => {
+    fetch('/api/v0/get_config').then((res) => {
       res.json().then(data => {
         if(data.type === 'config') {
           updateConfig(data.config)
-          // config.update(data.config);
         }
       }).catch(err => console.log(err))
 
@@ -303,10 +339,39 @@
 <Sidebar getTrainingData={getTrainingData} newQuestionPage={newQuestionPage} loadQuestionPage={loadQuestionPage} questionHistory={questionHistory} />
 
 {#if currentPage === 'chat'}
-  <ChatPage suggestedQuestions={suggestedQuestions} messageLog={messageLog} newQuestion={newQuestion} rerunSql={rerunSql} clearMessages={clearMessages} onUpdateSql={onUpdateSql} bind:question_asked bind:thinking bind:marked_correct />
+  {#if allow_run_sql}
+    <ChatPage 
+      suggestedQuestions={suggestedQuestions} 
+      messageLog={messageLog} 
+      newQuestion={newQuestion} 
+      rerunSql={rerunSql} 
+      clearMessages={clearMessages} 
+      onUpdateSql={onUpdateSql} 
+      bind:question_asked 
+      bind:thinking 
+      bind:marked_correct 
+    />
+  {:else}
+    <ChatPageNoSql 
+      suggestedQuestions={suggestedQuestions} 
+      messageLog={messageLog} 
+      newQuestion={newQuestionNoRunSql} 
+      clearMessages={clearMessages} 
+      onUpdateSql={onUpdateSql}
+      bind:question_asked 
+      bind:thinking 
+      bind:marked_correct 
+    />
+  {/if}
+  
 {:else if currentPage === 'training-data'}
-  <TrainingData trainingData={trainingData} removeTrainingData={removeTrainingData} onTrain={onTrain} />
+  <TrainingData 
+    trainingData={trainingData} 
+    removeTrainingData={removeTrainingData} 
+    onTrain={onTrain} 
+  />
 {/if}
+
 
 </main>
 

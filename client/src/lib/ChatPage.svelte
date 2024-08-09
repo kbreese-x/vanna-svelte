@@ -106,6 +106,16 @@
               <AgentResponse>
                 <Plotly fig={message.fig} />
               </AgentResponse>
+              {#if message.followup_questions}
+                <AgentResponse>
+                  <Text>
+                    Here are some follow-up questions:
+                    {#each message.followup_questions as question}
+                      <InChatButton message={question} onSubmit={newQuestion} />
+                    {/each}
+                  </Text>
+                </AgentResponse>
+              {/if}
           {:else if message.type === 'user_sql'}
               <UserMessage message="Put your SQL here">
                 <SqlInput onSubmit={onUpdateSql} />

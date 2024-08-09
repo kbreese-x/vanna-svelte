@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="64" cy="64" r="64"/>
+    </clipPath>
+    <rect id="path-1" x="0" y="0" width="128" height="128"/>
+    <linearGradient id="qGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#02b5e2;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0277c8;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+  <g id="Digital-Style-Guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g clip-path="url(#circleClip)">
+      <g id="Brand" transform="translate(-1069.000000, -876.000000)">
+        <g id="Brand-/-Identity" transform="translate(0.000000, 208.000000)">
+          <g id="qifin-favicon-copy" transform="translate(1069.000000, 668.000000)">
+            <rect id="Rectangle" fill="#002B49" fill-rule="nonzero" x="0" y="0" width="128" height="128"/>
+            <g id="Clipped">
+              <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"/>
+              </mask>
+              <g id="Rectangle"/>
+              <g id="Group" mask="url(#mask-2)">
+                <g transform="translate(40, 21.638400)">
+                  <path id="Q" stroke-linecap="round" fill-rule="evenodd" font-size="9pt" stroke="#000000" stroke-width="3mm" fill="url(#qGradient)" style="stroke:url(#qGradient);" d="M 59.229 80.176 L 57.52 82.178 L 41.455 70.752 A 25.705 25.705 0 0 1 35.84 72.559 A 30.803 30.803 0 0 1 29.786 73.145 A 29.852 29.852 0 0 1 21.942 72.144 A 26.167 26.167 0 0 1 17.676 70.582 A 27.071 27.071 0 0 1 8.252 63.257 Q 4.297 58.497 2.149 51.856 A 43.57 43.57 0 0 1 0.355 43.419 A 55.931 55.931 0 0 1 0 37.012 L 0 36.133 A 54.698 54.698 0 0 1 0.6 27.859 A 42.775 42.775 0 0 1 2.124 21.29 A 36.376 36.376 0 0 1 5.286 14.077 A 30.544 30.544 0 0 1 8.203 9.888 A 27.135 27.135 0 0 1 17.603 2.564 A 27.124 27.124 0 0 1 27.039 0.106 A 32.64 32.64 0 0 1 29.688 0.001 A 29.446 29.446 0 0 1 37.856 1.105 A 26.208 26.208 0 0 1 41.748 2.564 Q 47.217 5.127 51.197 9.888 A 32.078 32.078 0 0 1 55.971 17.703 A 39.1 39.1 0 0 1 57.325 21.29 A 43.57 43.57 0 0 1 59.118 29.726 A 55.931 55.931 0 0 1 59.473 36.133 L 59.473 37.012 A 53.121 53.121 0 0 1 58.607 46.838 A 39.381 39.381 0 0 1 55.396 56.763 Q 51.319 65.186 44.092 69.385 L 59.229 80.176 Z M 56.836 37.012 L 56.836 36.036 Q 56.836 25.977 53.467 18.458 A 29.881 29.881 0 0 0 49.141 11.441 A 25.163 25.163 0 0 0 44.019 6.788 A 23.826 23.826 0 0 0 32.981 2.812 A 30.372 30.372 0 0 0 29.688 2.637 A 27.316 27.316 0 0 0 22.022 3.675 A 22.902 22.902 0 0 0 15.43 6.788 A 25.986 25.986 0 0 0 7.624 15.329 A 32.676 32.676 0 0 0 6.031 18.458 A 37.647 37.647 0 0 0 3.326 27.72 A 51.524 51.524 0 0 0 2.686 36.036 L 2.686 37.012 A 52.256 52.256 0 0 0 3.326 45.394 Q 4.149 50.458 6.031 54.688 A 29.535 29.535 0 0 0 10.363 61.727 A 25.035 25.035 0 0 0 15.479 66.358 Q 21.582 70.508 29.786 70.508 A 27.552 27.552 0 0 0 37.46 69.479 A 22.874 22.874 0 0 0 44.092 66.358 A 25.986 25.986 0 0 0 51.899 57.817 A 32.676 32.676 0 0 0 53.492 54.688 Q 56.83 47.182 56.836 37.048 A 62.104 62.104 0 0 0 56.836 37.012 Z"/>
+                  <g id="Group" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-28.000000, 29.574400)">
+                    <rect id="Rectangle" fill="#A2B2C8" fill-rule="nonzero" x="2.27373675e-15" y="13.192" width="16.064" height="13.192"/>
+                    <rect id="Rectangle" fill="#A2B2C8" fill-rule="nonzero" x="32.128" y="9.09494702e-15" width="16.064" height="13.192"/>
+                    <rect id="Rectangle" fill="#A2B2C8" fill-rule="nonzero" x="16.064" y="26.3824" width="16.064" height="13.192"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

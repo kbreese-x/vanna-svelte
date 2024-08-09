@@ -30,20 +30,21 @@ export interface QuestionLink {
 }
 
 export interface Config {
+    allow_run_sql: boolean;
     logo: string;
     title: string;
     subtitle: string;
-    show_training_data?: boolean;
-    suggested_questions?: boolean;
-    sql?: boolean;
-    table?: boolean;
-    csv_download?: boolean;
-    chart?: boolean;
-    redraw_chart?: boolean;
-    auto_fix_sql?: boolean;
-    ask_results_correct?: boolean;
-    followup_questions?: boolean;
-    summarization?: boolean;
-    function_generation?: boolean;
-    apiUrl?: string;
+    show_training_data: boolean;
+    suggested_questions: boolean;
+    sql: boolean;
+    table: boolean;
+    csv_download: boolean;
+    chart: boolean;
+    redraw_chart: boolean;
+    auto_fix_sql: boolean;
+    ask_results_correct: boolean;
+    followup_questions: boolean;
+    summarization: boolean;
+    function_generation: boolean;
+    apiUrl: string;
 }

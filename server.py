@@ -1,3 +1,5 @@
+from doctest import debug
+from flask import Flask
 from vanna.vannadb import VannaDB_VectorStore
 from sagemaker_llm import SageMakerLLM
 from custom_vanna_flask import CustomVannaFlaskApp
@@ -31,8 +33,9 @@ CustomVannaFlaskApp(
     vn=vn,
     logo="https://www.xifin.com/wp-content/themes/xifin/images/xifin-logo--color-blue-gradient.svg",
     title="XiQuery",
-    subtitle="Turn natural language into SQL",
-    allow_llm_to_see_data=True,
+    # subtitle="Turn natural language into SQL",
+    # allow_llm_to_see_data=True,
+    # allow_llm_to_run_sql=True,
     index_html_path="index.html",
     assets_folder="assets",
     static_folder="static"
