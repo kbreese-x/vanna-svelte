@@ -38,5 +38,6 @@ CustomVannaFlaskApp(
     # allow_llm_to_run_sql=True,
     index_html_path="index.html",
     assets_folder="assets",
-    static_folder="static"
+    static_folder="static",
+    
 ).run()
